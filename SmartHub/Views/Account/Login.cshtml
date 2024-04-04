@@ -1,0 +1,157 @@
+﻿@model SmartHub.Models.LoginViewModel
+<style>
+    .login-form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+    }
+
+    .div-box {
+        width: 330px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="submit"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        background-color: #3199ad;
+        color: #333;
+        border: none;
+        cursor: pointer;
+    }
+
+        input[type="submit"]:hover {
+            background-color: #3199ad;
+             color: black;
+        }
+
+    .logout-btn,
+    .change-credentials-link,
+    .add-user-link {
+        width: 100%;
+        margin-top: 10px;
+        padding: 15px;
+        color: #333;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+    }
+
+        .logout-btn:hover,
+        .change-credentials-link:hover,
+        .add-user-link:hover {
+            background-color: #3199ad;
+            color: black;
+        }
+
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #f2f2f2;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .link-container {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="login-form">
+    <div class="div-box">
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <h1>Вход в личный кабинет</h1>
+            <form asp-area="" asp-controller="Account" asp-action="Login" method="post" id="loginForm">
+                <div asp-validation-summary="All"></div>
+                <div>
+                    <label asp-for="UserName"></label>
+                    <input asp-for="UserName" />
+                    <span asp-validation-for="UserName"></span>
+                </div>
+                <div>
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" />
+                    <span asp-validation-for="Password"></span>
+                </div>
+                <div>
+                    <label asp-for="RememberMe"></label>
+                    <input asp-for="RememberMe" />
+                    <span asp-validation-for="RememberMe"></span>
+                </div>
+                <div>
+                    <input type="submit" value="Войти" />
+                </div>
+            </form>
+        }
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div style="text-align: center; background-color: #3199ad;">
+                <a asp-controller="Account" asp-action="Logout" class="change-credentials-link">
+                    <img style="width: 50px; margin-bottom: 10px;" src="~/images/output.png" alt="img"><br>
+                    Выйти из аккаунта
+                </a>
+            </div>
+            <div style="text-align: center; background-color: #3199ad;">
+                <a asp-controller="Account" asp-action="ChangeCredentials" class="change-credentials-link">Сменить пароль</a>
+            </div>
+            
+            @if (User.IsInRole("admin"))
+            {
+                <div style="text-align: center; background-color: #3199ad;">
+                    <a asp-controller="Account" asp-action="AddOrEditUser" class="add-user-link">Добавить пользователя или изменить его</a>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('loginForm');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(form);
+
+            fetch('/Account/Login', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem('accessToken', data.token);
+                    window.location.href = '/';
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        });
+    });
+
+    function logout() {
+        localStorage.removeItem('accessToken');
+        window.location.href = '/Account/Logout';
+    }
+</script>

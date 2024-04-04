@@ -1,0 +1,96 @@
+﻿@model SmartHub.Models.CreateRoleViewModel
+
+<style>
+    .btn {
+        background-color: #3199ad;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        color: #333;
+    }
+
+        .btn:hover {
+            background-color: #3199ad;
+            color: black;
+        }
+
+    .div-box {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="submit"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        background-color: #3199ad;
+        color: #333;
+        border: none;
+        cursor: pointer;
+    }
+
+        input[type="submit"]:hover {
+            background-color: #3199ad;
+            color: black;
+        }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div style="padding-top: 100px;">
+    <div class="div-box">
+        <h2>Создать новую роль</h2>
+        <form id="createRoleForm" asp-action="CreateRole" method="post">
+            <label for="roleName">Имя роли:</label>
+            <input type="text" id="roleName" name="roleName" required />
+            <button class="btn" type="submit">Создать</button>
+        </form>
+    </div>
+
+    <div style="margin-top: 20px;" class="div-box">
+        <h2>Список всех ролей</h2>
+        <table>
+            <tr>
+                <th>Название роли</th>
+                <th>Действие</th>
+            </tr>
+            @foreach (var role in Model.Roles)
+            {
+                <tr>
+                    <td>@role.Name</td>
+                    <td>
+                        <form asp-action="DeleteRole" asp-route-id="@role.Id" method="post">
+                            <button type="submit" class="btn">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
