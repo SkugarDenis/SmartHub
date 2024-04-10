@@ -1,1 +1,3 @@
 ﻿dotnet ef migrations add InitialCreate
+dotnet ef migrations add InitialCreatedotnet -c AppDataContext
+dotnet ef migrations add InitialCreatedotnet -c DataDbContext

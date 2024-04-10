@@ -79,13 +79,10 @@ namespace SmartHub.Controllers
                     var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        // После успешной смены логина и пароля, редиректим пользователя на главную страницу или другую страницу
                         return RedirectToAction("Index", "Home");
                     }
                 }
             }
-
-            // Если модель невалидна, возвращаем пользователя на страницу с формой с сообщениями об ошибках
             return View(model);
         }
 

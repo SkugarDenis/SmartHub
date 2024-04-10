@@ -6,14 +6,12 @@
     <title>@ViewData["Title"] - SmartHub</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style type="text/css">
-        /* скрываем чекбокс */
         #menu__toggle {
             opacity: 0;
         }
-        /* стилизуем кнопку */
         .menu__btn {
-            display: flex; /* используем flex для центрирования содержимого */
-            align-items: center; /* центрируем содержимое кнопки */
+            display: flex;
+            align-items: center;
             position: fixed;
             top: 20px;
             left: 20px;
@@ -22,7 +20,6 @@
             cursor: pointer;
             z-index: 1;
         }
-            /* добавляем "гамбургер" */
             .menu__btn > span,
             .menu__btn > span::before,
             .menu__btn > span::after {
@@ -43,8 +40,6 @@
                     top: 8px;
                 }
 
-
-        /* контейнер меню */
         .menu__box {
             display: block;
             position: fixed;
@@ -60,7 +55,6 @@
             background-color: #3199ad;
             box-shadow: 1px 0px 6px rgba(0, 0, 0, .2);
         }
-        /* элементы меню */
         .menu__item {
             display: block;
             padding: 12px 24px;
@@ -202,27 +196,6 @@
     </style>
 </head>
 <body>
-    @* <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container-fluid">
-    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SmartHub</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-    aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-    <ul class="navbar-nav flex-grow-1">
-    <li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </li>
-    </ul>
-    </div>
-    </div>
-    </nav>
-    </header>*@
     <header style="background-color: #3199ad; height: 70px; position: fixed; width: 100%;" class="hamburger-menu">
         <h2 style="margin: 0; padding: 15px; text-align: right; vertical-align: middle; font-size : 35px; color:black">SmartHub</h2>
         <p style="padding: 0; width: 50px; height: 50px; margin-top: -60px; margin-left: 70px;"><a asp-controller="Account" asp-action="Login"><img src="~/images/user.webp" style="width:50px;"></a></p>

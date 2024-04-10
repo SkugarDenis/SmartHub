@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
+using SmartHub;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using SmartHub.DataContext;
 
 namespace SmartHub
 {
@@ -22,7 +25,13 @@ namespace SmartHub
 
             builder.Services.AddDbContext<AppDataContext>(options =>
             {
-                options.UseSqlite("Data Source=dataBase.db");
+                options.UseSqlite("Data Source=identity.db");
+            });
+
+
+            builder.Services.AddDbContext<DataDbContext>(options =>
+            {
+                options.UseSqlite("Data Source=dataContext.db");
             });
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>

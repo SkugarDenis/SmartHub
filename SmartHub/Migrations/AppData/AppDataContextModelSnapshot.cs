@@ -2,19 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartHub.DbIdentity;
 
 #nullable disable
 
-namespace SmartHub.Migrations
+namespace SmartHub.Migrations.AppData
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20240329145218_InitialCreate")]
-    partial class InitialCreate
+    partial class AppDataContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
@@ -48,7 +46,7 @@ namespace SmartHub.Migrations
                         new
                         {
                             Id = "44546e06-8732-4ad8-b88a-f271ae9d6eab",
-                            ConcurrencyStamp = "b0b0fe86-6920-4d46-98c0-c21adbeecadf",
+                            ConcurrencyStamp = "64a672f3-5326-4a63-8837-3d45818459a1",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -145,13 +143,13 @@ namespace SmartHub.Migrations
                         {
                             Id = "3b62472e-4f72-49fa-a20f-e7685b9565d8",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fb00dc6c-3f50-4625-a9dd-03fffeee2c93",
+                            ConcurrencyStamp = "4cb63d75-b9eb-41ef-b4a8-1519b61033a0",
                             Email = "empty@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "EMPTY@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJUlGDfpdz/ogKIvvhgZim3gy5wx7o7dLX4vZnn0QsSSxKP9JRBqyTi+rdbFwluQlg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPoXVwdnHXsHf8d+QIafRD5qaBjHBQrcYJVVgctuD9Qa1+VCmDy057jBWfPea48JUw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
