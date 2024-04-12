@@ -15,12 +15,17 @@ namespace SmartHub.Controllers
     {
         private readonly Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _conf;
-        public AccountController(Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userMgr, SignInManager<IdentityUser> signinMgr, IConfiguration conf)
+        public AccountController(Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userMgr,
+            SignInManager<IdentityUser> signinMgr,
+            IConfiguration conf,
+            Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> roleManager)
         {
             userManager = userMgr;
             signInManager = signinMgr;
             _conf = conf;
+            _roleManager = roleManager;
         }
 
         [AllowAnonymous]
@@ -110,10 +115,16 @@ namespace SmartHub.Controllers
                  UserName= x.UserName
             }).ToListAsync();
 
+            var roles = await _roleManager.Roles.Select(r => new RoleItem()
+            {
+                 Id= r.Id,
+                 Name= r.Name
+            }).ToListAsync();
 
             return View(new AddOrEditUserViewModel()
             {
-                users = users
+                users = users,
+                roles = roles
             });
         }
 
@@ -137,7 +148,7 @@ namespace SmartHub.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok("Пользователь успешно создан");
+                    return RedirectToAction(nameof(AddOrEditUser));
                 }
                 else
                 {
@@ -166,7 +177,7 @@ namespace SmartHub.Controllers
                     }
 
                     await userManager.DeleteAsync(existingUser);
-                    return Ok();
+                    return RedirectToAction(nameof(AddOrEditUser));
                 }
 
                 return BadRequest("Ошибка удаления пользователя");

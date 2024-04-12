@@ -46,19 +46,54 @@
             color: black;
         }
 
+    /* Модальное окно стилей */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
 </style>
+
 <div style="padding-top:100px;">
     <div class="div-box">
-         <h2>Создание нового пользователя</h2>
-            <div>
-                <form id="createUserForm">
-                    <label for="username">Логин:</label>
-                    <input type="text" id="username" placeholder="Enter username"><br><br>
-                    <label for="password">Пароль:</label>
-                    <input type="password" id="password" placeholder="Enter password"><br><br>
+        <h2>Создание нового пользователя</h2>
+        <div>
+            <form id="createUserForm">
+                <label for="username">Логин:</label>
+                <input type="text" id="username" placeholder="Enter username"><br><br>
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" placeholder="Enter password"><br><br>
                 <button class="btn" style="background-color:#3199ad; padding:10px; border-width: 0px;" type="button" onclick="createUser()">Создать</button>
-                </form>
-            </div>
+            </form>
+        </div>
     </div>
 
     <div style="margin-top:20px;" class="div-box">
@@ -74,7 +109,7 @@
                     <td style="border: 1px solid #ccc; padding: 8px;">@item.UserName</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
                         <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer; margin-right: 5px;" onclick="deleteUser('@item.UserId')">Удалить</button>
-                        <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer;" onclick="editUser('@item.UserId')">Изменить</button>
+                        <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer;" onclick="openEditModal('@item.UserId')">Изменить</button>
                     </td>
                 </tr>
             }
@@ -82,7 +117,30 @@
     </div>
 </div>
 
-
+<!-- Модальное окно для редактирования пользователя -->
+<div id="editUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Изменение пользователя</h2>
+        <form id="editUserForm">
+            <input type="hidden" id="editUserId" value="">
+            <label for="editUsername">Логин:</label>
+            <input type="text" id="editUsername" placeholder="Enter username"><br><br>
+            <h3>Выберите роли:</h3>
+            @if (Model.roles != null)
+            {
+                @foreach (var role in Model.roles)
+                {
+                    <div>
+                        <input type="checkbox" id="@role.Id" value="@role.Id">
+                        <label for="@role.Id">@role.Name</label>
+                    </div>
+                }
+            }
+            <button class="btn" style="background-color:#3199ad; padding:10px; border-width: 0px;" type="button" onclick="updateUser()">Изменить</button>
+        </form>
+    </div>
+</div>
 <script>
     function createUser() {
         var username = document.getElementById("username").value;
@@ -101,16 +159,16 @@
         })
             .then(response => {
                 if (response.ok) {
-                    alert("Пользователь успешно создан");
+                    console.log("Пользователь успешно создан");
                 } else {
                     throw new Error("Ошибка создания пользователя");
                 }
             })
             .catch(error => {
-                alert("Ошибка создания пользователя");
+                console.log("Ошибка создания пользователя");
             });
 
-         window.location.href = "/Account/AddOrEditUser";
+         //window.location.href = "/Account/AddOrEditUser";
     }
 
     function deleteUser(userId) {
@@ -127,19 +185,73 @@
         })
             .then(response => {
                 if (response.ok) {
-                    alert("Пользователь успешно удален");
+                    console.log("Пользователь успешно удален");
                 } else {
                     throw new Error("Ошибка удаления пользователя");
                 }
             })
             .catch(error => {
-                alert("Ошибка удаления пользователя");
+                console.log("Ошибка удаления пользователя");
             });
 
-            window.location.href = "/Account/AddOrEditUser";
+            //window.location.href = "/Account/AddOrEditUser";
+    }
+    // Функция открытия модального окна редактирования пользователя
+      function openEditModal(userId) {
+        console.log(userId);
+        document.getElementById('editUserId').value = userId;
+        document.getElementById('editUserModal').style.display = "block";
     }
 
-    function editUser(userId) {
-        console.log("Editing user with ID: " + userId);
+    // Функция закрытия модального окна редактирования пользователя
+    function closeEditModal() {
+        document.getElementById('editUserModal').style.display = "none";
+    }
+
+    // Функция обновления пользователя с добавлением ролей
+    function updateUser() {
+        var userId = document.getElementById("editUserId").value;
+        var username = document.getElementById("editUsername").value;
+        var roles = [];
+
+        // Получаем выбранные роли
+        var roleCheckboxes = document.querySelectorAll("input[type='checkbox']");
+        roleCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                roles.push(checkbox.value);
+            }
+        });
+
+        var formData = new URLSearchParams();
+        formData.append('UserId', userId);
+        formData.append('UserName', username);
+
+        // Добавляем выбранные роли к данным формы
+        roles.forEach(roleId => {
+            formData.append('Roles', roleId);
+        });
+
+        fetch('/Account/UpdateUserWithRoles', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Пользователь успешно обновлен");
+                    // Закрываем модальное окно
+                    closeEditModal();
+                    // Перезагружаем страницу для отображения изменений
+                    window.location.reload();
+                } else {
+                    throw new Error("Ошибка обновления пользователя");
+                }
+            })
+            .catch(error => {
+                console.log("Ошибка обновления пользователя");
+                console.log(error);
+            });
     }
 </script>
