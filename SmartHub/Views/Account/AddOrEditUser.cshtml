@@ -101,6 +101,7 @@
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
                 <th style="border: 1px solid #ccc; padding: 8px;">Логин</th>
+                <th style="border: 1px solid #ccc; padding: 8px;">Роли</th>
                 <th style="border: 1px solid #ccc; padding: 8px;">Действие</th>
             </tr>
             @foreach (var item in Model.users)
@@ -108,7 +109,14 @@
                 <tr>
                     <td style="border: 1px solid #ccc; padding: 8px;">@item.UserName</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
-                        <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer; margin-right: 5px;" onclick="deleteUser('@item.UserId')">Удалить</button>
+                        @foreach (var role in item.Roles)
+                        {
+                            <span>@role.Name</span>
+                            <!--<button class="btn" onclick="deleteUserRole('@item.UserId', '@role.Id')">Удалить</button>-->
+                        }
+                    </td>
+                    <td style="border: 1px solid #ccc; padding: 8px;">
+                        <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer; margin-right: 5px;" onclick="deleteUser('@item.UserId')">Удалить пользователя</button>
                         <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer;" onclick="openEditModal('@item.UserId')">Изменить</button>
                     </td>
                 </tr>
@@ -131,6 +139,11 @@
             {
                 @foreach (var role in Model.roles)
                 {
+                    @if (role.Name.Equals("admin"))
+                    {
+                        continue;
+                    }
+
                     <div>
                         <input type="checkbox" id="@role.Id" value="@role.Id">
                         <label for="@role.Id">@role.Name</label>
@@ -254,4 +267,32 @@
                 console.log(error);
             });
     }
+
+    function deleteUserRole(userId, roleId) {
+        var formData = new URLSearchParams();
+        formData.append('UserId', userId);
+        formData.append('RoleId', roleId);
+
+        fetch('/Account/DeleteUserRole', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Роль успешно удалена");
+                    // Перезагрузим страницу для обновления данных
+                    window.location.reload();
+                } else {
+                    throw new Error("Ошибка удаления роли");
+                }
+            })
+            .catch(error => {
+                console.log("Ошибка удаления роли");
+                console.log(error);
+            });
+    }
+
 </script>

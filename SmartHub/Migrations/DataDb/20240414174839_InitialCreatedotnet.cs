@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace SmartHub.Migrations
+namespace SmartHub.Migrations.DataDb
 {
     public partial class InitialCreatedotnet : Migration
     {
@@ -19,6 +19,21 @@ namespace SmartHub.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GroupEntities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RelationshipUserAndRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    idUser = table.Column<string>(type: "TEXT", nullable: false),
+                    UserName = table.Column<string>(type: "TEXT", nullable: false),
+                    IdRole = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RelationshipUserAndRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,6 +67,9 @@ namespace SmartHub.Migrations
         {
             migrationBuilder.DropTable(
                 name: "RelationshipGroupsAndroles");
+
+            migrationBuilder.DropTable(
+                name: "RelationshipUserAndRoles");
 
             migrationBuilder.DropTable(
                 name: "GroupEntities");

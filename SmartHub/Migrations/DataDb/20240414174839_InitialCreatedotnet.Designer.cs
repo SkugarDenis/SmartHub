@@ -8,10 +8,10 @@ using SmartHub.DataContext;
 
 #nullable disable
 
-namespace SmartHub.Migrations
+namespace SmartHub.Migrations.DataDb
 {
     [DbContext(typeof(DataDbContext))]
-    [Migration("20240406113305_InitialCreatedotnet")]
+    [Migration("20240414174839_InitialCreatedotnet")]
     partial class InitialCreatedotnet
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,6 +59,29 @@ namespace SmartHub.Migrations
                     b.HasIndex("GroupEntityId");
 
                     b.ToTable("RelationshipGroupsAndroles");
+                });
+
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.RelationshipUserAndRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("IdRole")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("idUser")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RelationshipUserAndRoles");
                 });
 
             modelBuilder.Entity("SmartHub.DataContext.DbModels.RelationshipGroupAndRole", b =>

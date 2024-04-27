@@ -7,7 +7,7 @@ using SmartHub.DataContext;
 
 #nullable disable
 
-namespace SmartHub.Migrations
+namespace SmartHub.Migrations.DataDb
 {
     [DbContext(typeof(DataDbContext))]
     partial class DataDbContextModelSnapshot : ModelSnapshot
@@ -57,6 +57,29 @@ namespace SmartHub.Migrations
                     b.HasIndex("GroupEntityId");
 
                     b.ToTable("RelationshipGroupsAndroles");
+                });
+
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.RelationshipUserAndRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("IdRole")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("idUser")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RelationshipUserAndRoles");
                 });
 
             modelBuilder.Entity("SmartHub.DataContext.DbModels.RelationshipGroupAndRole", b =>

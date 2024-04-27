@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SmartHub.Migrations.AppData
+namespace SmartHub.Migrations
 {
     public partial class InitialCreatedotnet : Migration
     {
@@ -157,12 +157,12 @@ namespace SmartHub.Migrations.AppData
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "44546e06-8732-4ad8-b88a-f271ae9d6eab", "64a672f3-5326-4a63-8837-3d45818459a1", "admin", "ADMIN" });
+                values: new object[] { "44546e06-8732-4ad8-b88a-f271ae9d6eab", "c6601f16-1380-498c-845b-d7d56abe96ec", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "3b62472e-4f72-49fa-a20f-e7685b9565d8", 0, "4cb63d75-b9eb-41ef-b4a8-1519b61033a0", "empty@email.com", true, false, null, "EMPTY@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEPoXVwdnHXsHf8d+QIafRD5qaBjHBQrcYJVVgctuD9Qa1+VCmDy057jBWfPea48JUw==", null, false, "", false, "admin" });
+                values: new object[] { "3b62472e-4f72-49fa-a20f-e7685b9565d8", 0, "fece2dd1-8387-479f-af97-fff17f6bd54a", "empty@email.com", true, false, null, "EMPTY@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEHbiiS5q4ycrj7glTmr3DsJAJrBglZkysmx0pAfttiW7jfSrmSPOQVQiY9HUZBH8dw==", null, false, "", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SmartHub.DataContext;
 using SmartHub.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,15 +18,18 @@ namespace SmartHub.Controllers
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _conf;
+        private readonly DataDbContext _context;
         public AccountController(Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userMgr,
             SignInManager<IdentityUser> signinMgr,
             IConfiguration conf,
-            Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> roleManager)
+            Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> roleManager,
+            DataDbContext context)
         {
             userManager = userMgr;
             signInManager = signinMgr;
             _conf = conf;
             _roleManager = roleManager;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -107,18 +111,87 @@ namespace SmartHub.Controllers
 
         [Authorize]
         [Authorize(Roles = "admin")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateUserWithRoles(string userId, string userName, List<string> roles)
+        {    
+            // Проверяем, существует ли пользователь
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Пользователь не найден");
+            }
+
+            // Проверяем существование каждой роли перед добавлением
+            foreach (var roleId in roles)
+            {
+                var role = await _roleManager.FindByIdAsync(roleId);
+                if (role == null)
+                {
+                    return BadRequest($"Роль с ID {roleId} не существует");
+                }
+
+                //// Проверяем, является ли пользователь членом этой роли
+                //if (!await userManager.IsInRoleAsync(user, role.Name))
+                //{
+                //    return BadRequest($"Пользователь не является членом роли {role.Name}");
+                //}
+            }
+
+            // Удаляем все текущие роли пользователя
+            var currentRoles = await userManager.GetRolesAsync(user);
+            var removeResult = await userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                return BadRequest("Ошибка при удалении текущих ролей пользователя");
+            }
+            // Добавляем новые роли
+            var rolesName = await _roleManager.Roles.Where(x => roles.Contains(x.Id)).Select(x => x.Name).ToListAsync();
+            var addResult = await userManager.AddToRolesAsync(user, rolesName);
+            if (!addResult.Succeeded)
+            {
+                return BadRequest("Ошибка при добавлении новых ролей пользователю");
+            }
+
+
+
+            return Ok("Пользователь успешно обновлен");
+        }
+
+        [Authorize]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddOrEditUser()
         {
-            var users = await userManager.Users.Where(x=>!x.UserName.Equals("admin")).Select(x=> new UserItem
+            var users = await userManager.Users.Where(x => !x.UserName.Equals("admin")).Select(x => new UserItem
             {
-                 UserId= x.Id,
-                 UserName= x.UserName
+                UserId = x.Id,
+                UserName = x.UserName
             }).ToListAsync();
+
+            var RalationsRolesToUser = await _context.RelationshipUserAndRoles.ToListAsync();
+            var AllRoles = await _roleManager.Roles.AsNoTracking().ToListAsync();
+
+            foreach (var user in users)
+            {
+                // Получаем роли пользователя
+                var userRoles = await userManager.GetRolesAsync(new IdentityUser { Id = user.UserId });
+
+                // Преобразуем их в RoleItem
+                var roleItems = await _roleManager.Roles
+                    .Where(r => userRoles.Contains(r.Name))
+                    .Select(r => new RoleItem
+                    {
+                        Id = r.Id,
+                        Name = r.Name
+                    })
+                    .ToListAsync();
+
+                user.Roles = roleItems;
+            }
 
             var roles = await _roleManager.Roles.Select(r => new RoleItem()
             {
-                 Id= r.Id,
-                 Name= r.Name
+                Id = r.Id,
+                Name = r.Name
             }).ToListAsync();
 
             return View(new AddOrEditUserViewModel()
