@@ -111,12 +111,12 @@
                     <td style="border: 1px solid #ccc; padding: 8px;">
                         @foreach (var role in item.Roles)
                         {
-                            <span>@role.Name</span>
+                            <div>@role.Name</div>
                             <!--<button class="btn" onclick="deleteUserRole('@item.UserId', '@role.Id')">Удалить</button>-->
                         }
                     </td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
-                        <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer; margin-right: 5px;" onclick="deleteUser('@item.UserId')">Удалить пользователя</button>
+                        <button class="btn" style="background-color: #3199ad; margin:5px 0px 5px; padding: 10px 10px; border: none; cursor: pointer; margin-right: 5px;" onclick="deleteUser('@item.UserId')">Удалить пользователя</button>
                         <button class="btn" style="background-color: #3199ad; padding: 10px 10px; border: none; cursor: pointer;" onclick="openEditModal('@item.UserId')">Изменить</button>
                     </td>
                 </tr>
@@ -124,16 +124,14 @@
         </table>
     </div>
 </div>
-
 <!-- Модальное окно для редактирования пользователя -->
 <div id="editUserModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeEditModal()">&times;</span>
-        <h2>Изменение пользователя</h2>
+        <!--<h2>Изменение пользователя</h2>-->
         <form id="editUserForm">
             <input type="hidden" id="editUserId" value="">
-            <label for="editUsername">Логин:</label>
-            <input type="text" id="editUsername" placeholder="Enter username"><br><br>
+            <input type="hidden" id="editUsername" placeholder="Enter username">
             <h3>Выберите роли:</h3>
             @if (Model.roles != null)
             {
@@ -181,7 +179,7 @@
                 console.log("Ошибка создания пользователя");
             });
 
-         //window.location.href = "/Account/AddOrEditUser";
+        //window.location.href = "/Account/AddOrEditUser";
     }
 
     function deleteUser(userId) {
@@ -207,10 +205,10 @@
                 console.log("Ошибка удаления пользователя");
             });
 
-            //window.location.href = "/Account/AddOrEditUser";
+        //window.location.href = "/Account/AddOrEditUser";
     }
     // Функция открытия модального окна редактирования пользователя
-      function openEditModal(userId) {
+    function openEditModal(userId) {
         console.log(userId);
         document.getElementById('editUserId').value = userId;
         document.getElementById('editUserModal').style.display = "block";
@@ -238,7 +236,6 @@
         var formData = new URLSearchParams();
         formData.append('UserId', userId);
         formData.append('UserName', username);
-
         // Добавляем выбранные роли к данным формы
         roles.forEach(roleId => {
             formData.append('Roles', roleId);
