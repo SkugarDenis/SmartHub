@@ -157,12 +157,12 @@ namespace SmartHub.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "44546e06-8732-4ad8-b88a-f271ae9d6eab", "c6601f16-1380-498c-845b-d7d56abe96ec", "admin", "ADMIN" });
+                values: new object[] { "44546e06-8732-4ad8-b88a-f271ae9d6eab", "ebd21808-b10f-40dd-8c43-a9b0d4ad5a75", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "3b62472e-4f72-49fa-a20f-e7685b9565d8", 0, "fece2dd1-8387-479f-af97-fff17f6bd54a", "empty@email.com", true, false, null, "EMPTY@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEHbiiS5q4ycrj7glTmr3DsJAJrBglZkysmx0pAfttiW7jfSrmSPOQVQiY9HUZBH8dw==", null, false, "", false, "admin" });
+                values: new object[] { "3b62472e-4f72-49fa-a20f-e7685b9565d8", 0, "a95cd6ab-b15d-4023-8944-3fa5df30a9f4", "empty@email.com", true, false, null, "EMPTY@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEHIWlZHWBfkT7zGQUdMaYWGH7kDwEy3pDJRA10a2ImzheXlGoLGOfNYr4ozVCo5NfA==", null, false, "", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

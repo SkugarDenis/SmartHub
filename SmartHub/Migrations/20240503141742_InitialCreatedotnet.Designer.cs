@@ -11,7 +11,7 @@ using SmartHub.DbIdentity;
 namespace SmartHub.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20240414174828_InitialCreatedotnet")]
+    [Migration("20240503141742_InitialCreatedotnet")]
     partial class InitialCreatedotnet
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,7 @@ namespace SmartHub.Migrations
                         new
                         {
                             Id = "44546e06-8732-4ad8-b88a-f271ae9d6eab",
-                            ConcurrencyStamp = "c6601f16-1380-498c-845b-d7d56abe96ec",
+                            ConcurrencyStamp = "ebd21808-b10f-40dd-8c43-a9b0d4ad5a75",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });
@@ -145,13 +145,13 @@ namespace SmartHub.Migrations
                         {
                             Id = "3b62472e-4f72-49fa-a20f-e7685b9565d8",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fece2dd1-8387-479f-af97-fff17f6bd54a",
+                            ConcurrencyStamp = "a95cd6ab-b15d-4023-8944-3fa5df30a9f4",
                             Email = "empty@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "EMPTY@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHbiiS5q4ycrj7glTmr3DsJAJrBglZkysmx0pAfttiW7jfSrmSPOQVQiY9HUZBH8dw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHIWlZHWBfkT7zGQUdMaYWGH7kDwEy3pDJRA10a2ImzheXlGoLGOfNYr4ozVCo5NfA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

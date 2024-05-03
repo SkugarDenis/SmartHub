@@ -9,16 +9,19 @@ namespace SmartHub.Migrations.DataDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "GroupEntities",
+                name: "Devices",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    ExternalId = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupEntities", x => x.Id);
+                    table.PrimaryKey("PK_Devices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,6 +37,46 @@ namespace SmartHub.Migrations.DataDb
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RelationshipUserAndRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceInterfaceItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    DataType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Control = table.Column<string>(type: "TEXT", nullable: false),
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceInterfaceItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceInterfaceItem_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupEntities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GroupEntities_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -58,6 +101,16 @@ namespace SmartHub.Migrations.DataDb
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_DeviceInterfaceItem_DeviceId",
+                table: "DeviceInterfaceItem",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupEntities_DeviceId",
+                table: "GroupEntities",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RelationshipGroupsAndroles_GroupEntityId",
                 table: "RelationshipGroupsAndroles",
                 column: "GroupEntityId");
@@ -66,6 +119,9 @@ namespace SmartHub.Migrations.DataDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DeviceInterfaceItem");
+
+            migrationBuilder.DropTable(
                 name: "RelationshipGroupsAndroles");
 
             migrationBuilder.DropTable(
@@ -73,6 +129,9 @@ namespace SmartHub.Migrations.DataDb
 
             migrationBuilder.DropTable(
                 name: "GroupEntities");
+
+            migrationBuilder.DropTable(
+                name: "Devices");
         }
     }
 }

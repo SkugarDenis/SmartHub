@@ -10,6 +10,8 @@ using System;
 using SmartHub;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using SmartHub.DataContext;
+using System.Net.WebSockets;
+using Microsoft.AspNetCore.WebSockets;
 
 namespace SmartHub
 {
@@ -21,13 +23,14 @@ namespace SmartHub
 
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddSingleton<WebSocketManager>();
+
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<AppDataContext>(options =>
             {
                 options.UseSqlite("Data Source=identity.db");
             });
-
 
             builder.Services.AddDbContext<DataDbContext>(options =>
             {
@@ -59,6 +62,10 @@ namespace SmartHub
             });
 
             var app = builder.Build();
+
+            app.UseWebSockets();
+
+            app.UseMiddleware<DeviceMiddleware>();
 
             // Применение миграций
             using (var serviceScope = app.Services.CreateScope())

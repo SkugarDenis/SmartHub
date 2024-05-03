@@ -11,7 +11,7 @@ using SmartHub.DataContext;
 namespace SmartHub.Migrations.DataDb
 {
     [DbContext(typeof(DataDbContext))]
-    [Migration("20240414174839_InitialCreatedotnet")]
+    [Migration("20240503141749_InitialCreatedotnet")]
     partial class InitialCreatedotnet
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,10 +19,46 @@ namespace SmartHub.Migrations.DataDb
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
 
-            modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.DeviceInterfaceItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Control")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DataType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("DeviceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -30,6 +66,28 @@ namespace SmartHub.Migrations.DataDb
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("DeviceInterfaceItem");
+                });
+
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("DeviceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
 
                     b.ToTable("GroupEntities");
                 });
@@ -84,11 +142,32 @@ namespace SmartHub.Migrations.DataDb
                     b.ToTable("RelationshipUserAndRoles");
                 });
 
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.DeviceInterfaceItem", b =>
+                {
+                    b.HasOne("SmartHub.DataContext.DbModels.Device", null)
+                        .WithMany("Interfaces")
+                        .HasForeignKey("DeviceId");
+                });
+
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
+                {
+                    b.HasOne("SmartHub.DataContext.DbModels.Device", null)
+                        .WithMany("Groups")
+                        .HasForeignKey("DeviceId");
+                });
+
             modelBuilder.Entity("SmartHub.DataContext.DbModels.RelationshipGroupAndRole", b =>
                 {
                     b.HasOne("SmartHub.DataContext.DbModels.GroupEntity", null)
                         .WithMany("Roles")
                         .HasForeignKey("GroupEntityId");
+                });
+
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.Device", b =>
+                {
+                    b.Navigation("Groups");
+
+                    b.Navigation("Interfaces");
                 });
 
             modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
