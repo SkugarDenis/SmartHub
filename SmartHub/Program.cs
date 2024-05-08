@@ -12,6 +12,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using SmartHub.DataContext;
 using System.Net.WebSockets;
 using Microsoft.AspNetCore.WebSockets;
+using Microsoft.OpenApi.Models;
 
 namespace SmartHub
 {
@@ -61,6 +62,11 @@ namespace SmartHub
                 x.AddPolicy("AdminArea", policy => { policy.RequireRole("admin"); });
             });
 
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+            });
+
             var app = builder.Build();
 
             app.UseWebSockets();
@@ -80,6 +86,12 @@ namespace SmartHub
                 // Значение по умолчанию для HSTS составляет 30 дней. Вы можете изменить его для сценариев продакшена, см. https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api");
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

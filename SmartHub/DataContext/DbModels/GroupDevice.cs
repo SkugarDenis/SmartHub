@@ -3,16 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartHub.DataContext.DbModels
 {
-    public class GroupEntity
+    public class GroupDevice
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public int GroupEntityId { get; set; }
+        public GroupEntity GroupEntity { get; set; }
 
-        public string Name { get; set; }
-
-        public ICollection<RelationshipGroupAndRole> Roles { get; set; }
-
-        public ICollection<GroupDevice> GroupDevices { get; set; }
+        public int DeviceId { get; set; }
+        public Device Device { get; set; }
     }
 }

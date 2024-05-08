@@ -80,6 +80,32 @@ namespace SmartHub.Migrations.DataDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "GroupDevices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GroupEntityId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupDevices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GroupDevices_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GroupDevices_GroupEntities_GroupEntityId",
+                        column: x => x.GroupEntityId,
+                        principalTable: "GroupEntities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RelationshipGroupsAndroles",
                 columns: table => new
                 {
@@ -106,6 +132,16 @@ namespace SmartHub.Migrations.DataDb
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GroupDevices_DeviceId",
+                table: "GroupDevices",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GroupDevices_GroupEntityId",
+                table: "GroupDevices",
+                column: "GroupEntityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GroupEntities_DeviceId",
                 table: "GroupEntities",
                 column: "DeviceId");
@@ -120,6 +156,9 @@ namespace SmartHub.Migrations.DataDb
         {
             migrationBuilder.DropTable(
                 name: "DeviceInterfaceItem");
+
+            migrationBuilder.DropTable(
+                name: "GroupDevices");
 
             migrationBuilder.DropTable(
                 name: "RelationshipGroupsAndroles");

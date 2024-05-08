@@ -21,6 +21,8 @@ namespace SmartHub.DataContext.DbModels
         public DeviceType Type { get; set; }
 
         public List<DeviceInterfaceItem> Interfaces { get; set; }
+
+        public ICollection<GroupDevice> GroupDevices { get; set; }
     }
 
     public class DeviceInterfaceItem

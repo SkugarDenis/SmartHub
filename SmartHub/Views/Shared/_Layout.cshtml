@@ -18,7 +18,7 @@
             width: 26px;
             height: 26px;
             cursor: pointer;
-            z-index: 1;
+            z-index: 10;
         }
             .menu__btn > span,
             .menu__btn > span::before,
@@ -196,7 +196,7 @@
     </style>
 </head>
 <body>
-    <header style="background-color: #3199ad; height: 70px; position: fixed; width: 100%;" class="hamburger-menu">
+    <header style="z-index:99; background-color: #3199ad; height: 70px; position: fixed; width: 100%;" class="hamburger-menu">
         <h2 style="margin: 0; padding: 15px; text-align: right; vertical-align: middle; font-size : 35px; color:black">SmartHub</h2>
         <p style="padding: 0; width: 50px; height: 50px; margin-top: -60px; margin-left: 70px;"><a asp-controller="Account" asp-action="Login"><img src="~/images/user.webp" style="width:50px;"></a></p>
         <p style="padding: 0; width: 30px; height: 30px; margin-top: -65px; margin-left: 150px;"><a asp-controller="Settings" asp-action="Index"><img src="~/images/settings.png" style="width:50px;"></a></p>

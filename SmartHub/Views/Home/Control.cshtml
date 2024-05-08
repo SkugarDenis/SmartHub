@@ -1,0 +1,495 @@
+﻿@model SmartHub.Models.ControlViewModel
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#333" />
+<link rel="manifest" href="site.webmanifest">
+<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#333333">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+
+    :root {
+        --main-color: #000000;
+        --main-bg-color: #3199ad;
+      --main-bg-sec-color: #3199ad;
+      --font-size:10vmin;
+      --font-size-neg:-5vmin;
+      --footer-size:10vmax;
+      --remote-size:60vmin;
+    }
+
+    .open-remote-modal-btn{
+        background-color: #3199ad;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        color: #333;
+        border-radius: 8px;
+    }
+
+        .open-remote-modal-btn:hover {
+        background-color: #3199ad;
+        color: black;
+    }
+
+    .main {
+
+        color: var(--main-color);
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .main {
+        height: 100%;
+    }
+    ul{display:flex;flex-wrap:wrap;padding-left:0;margin:0}
+    ul li{list-style: none;flex: 0 0 33.3333%;overflow:hidden;font-size:var(--font-size);display:flex;align-items:center;justify-content:center;}
+    footer {background:var(--main-bg-sec-color);width:100%;}
+    footer ul{height:var(--footer-size);}
+    .main a{color:var(--main-color);text-decoration:none;font-size:var(--font-size);}
+    .shadow{box-shadow: 0px 0px 20px 0px #000;}
+    .bg2{background:var(--main-bg-sec-color);border-radius:50%;}
+    .remote{width:var(--remote-size);height:var(--remote-size);border-radius: 50%;position: relative;flex-shrink: 0;box-sizing:border-box;}
+    .remote a {position:absolute;}
+    a.up{top: 0;left: 50%; margin-left: var(--font-size-neg);}
+    a.down{bottom: 0;left: 50%; margin-left: var(--font-size-neg);}
+    a.left{top: 50%;left: 0; margin-top: var(--font-size-neg);}
+    a.right{top: 50%;right: 0; margin-top: var(--font-size-neg);}
+    a.enter{border-radius: 50%;background:var(--main-color);top:50%;left:50%;width:30%;height:30%;margin-top: -15%;margin-left: -15%;}
+    .more{position:absolute;top:3vw;right:3vw;}
+    .power{position:absolute;top:3vw;left:3vw;}
+    #settings{display:flex;height:100%;width:100%;position:fixed;overflow:hidden;background:#000;opacity:.9;z-index:1;padding:1rem;font-family:monospace;justify-content:center;flex-direction:column;justify-content: space-evenly;box-sizing:border-box;transition:transform 300ms ease;will-change:transform;transform:translateX(100%);}
+    #settings input[type="text"]{display:block;width:90%}
+    #settings h3{margin:0;text-align:center;}
+    #deviceIP::placeholder{color:#f00;}
+    .wrapper{display:flex;flex-direction:column;flex: 1 0 auto;justify-content:space-around;}
+    .validate{display:flex;justify-content:space-around;margin-top:1rem;}
+    #enableVibrator {vertical-align:middle;}
+    small{margin-top:1rem;font-style:italic;}
+    .sig{display:block;margin-top: .5rem;text-align: right;}
+    .sig a{font-size:inherit;text-decoration: underline}
+    .buttons{width:100%;display:flex;flex-direction:row;align-items:center;justify-content:space-around;}
+    .buttons ul{padding:.5rem;border-radius:2rem;justify-content:space-around;height:25vmax;width:10vmin;display:flex;flex-direction:column;}
+    .cust li {display:none;}
+    #destFrame{display:none;}
+    @@media screen and (orientation:landscape) {
+      .buttons ul.vol{width:30%;height:auto;flex-direction:row-reverse;}
+      .buttons li {height: auto;}
+      .cust{margin-top:-30%;height:30vmax}
+      .wrapper{flex-direction:row;flex: 0 0 30%;flex-wrap: wrap;justify-content:flex-start}
+    }
+
+
+    /* The switch - the box around the slider */
+.switch {
+ font-size: 17px;
+ position: relative;
+ display: inline-block;
+ width: 62px;
+ height: 35px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+ opacity: 1;
+ width: 0;
+ height: 0;
+}
+
+/* The slider */
+.slider {
+ position: absolute;
+ cursor: pointer;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0px;
+ background: #fff;
+ transition: .4s;
+ border-radius: 30px;
+ border: 1px solid #ccc;
+
+}
+
+    span.slider {
+        z-index: 0;
+    }
+
+.slider:before {
+ position: absolute;
+ content: "";
+ height: 1.9em;
+ width: 1.9em;
+ border-radius: 16px;
+ left: 1.2px;
+ top: 0;
+ bottom: 0;
+ background-color: white;
+ box-shadow: 0 2px 5px #999999;
+ transition: .4s;
+}
+
+input:checked + .slider {
+        background-color: #3199ad;
+ border: 1px solid transparent;
+}
+
+input:checked + .slider:before {
+ transform: translateX(1.5em);
+}
+    .button-container {
+        position: fixed;
+        bottom: 12px;
+        right: 10px;
+        margin: 0 auto;
+    }
+
+     .checkbox-group {
+        margin-bottom: 10px;
+    }
+
+    .checkbox-group label {
+        display: block;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    .button {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(0, 0, 0, 0);
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: black;
+        font-size: 74px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        height: 90vh;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 24px;
+        color: #555;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-group button {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: #3199ad;
+            color: white;
+            cursor: pointer;
+        }
+
+
+    ul#interfaceList li {
+        font-size: 14px;
+    }
+</style>
+
+<div class="modal" id="myModal">
+    <div class="modal-content">
+        <span class="close-btn" id="close-btn">&times;</span>
+        <h2>Create New Device</h2>
+        <form id="deviceForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="externalId">External ID:</label>
+                <input type="text" id="externalId" name="externalId">
+            </div>
+            <div class="form-group">
+                <label for="type">Type:</label>
+                <select id="type" name="type">
+                    <option value="1">Switch</option>
+                    <option value="2">Remote Controller</option>
+                </select>
+            </div>
+            <div>
+                <label for="interfaces">Interfaces:</label>
+                <input type="text" id="interfaces" name="interfaces" placeholder="Enter interface name">
+                <select id="interfaceType">
+                    <option value="Boolean">Boolean</option>
+                    <option value="String">String</option>
+                    <option value="Int">Int</option>
+                </select>
+                <button type="button" id="addInterface">Add Interface</button>
+                <ul id="interfaceList"></ul>
+            </div>
+            <div>
+                <label style="display: block; font-weight: bold;">Groups:</label>
+                @foreach (var item in Model.GroupItems)
+                {
+                    <div>
+                        <label for="@item.name">@item.name</label>
+                        <input type="checkbox" id="@item.name" name="groups" value="@item.name">
+                    </div>
+                }
+            </div>
+            <div class="form-group">
+                <button type="submit">Create Device</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="padding-top:100px;" class="text-center">
+    @foreach (var group in Model.GroupItems)
+    {
+        <div style="margin:20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); padding: 5px;">
+            <h5 style="background-color:#3199ad; margin-top: 0px; margin-left:0px; margin-right:0px;">@group.name</h5>
+            <div style="display: flex; justify-content: space-between;">
+                <div style="width: 48%;">
+                    @foreach (var device in Model.Devices.Where(d => d.GroupDevices.Any(gd => gd.GroupEntityId == group.id) && d.Type == SmartHub.DataContext.DbModels.DeviceType.Switch))
+                    {
+                        <div style="margin-bottom: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); padding:5px;" class="switch-device">
+                            <h6>@device.Name</h6>
+                            @foreach (var inter in device.Interfaces)
+                            {
+                                <label style="margin:1px;" class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            }
+                            <span style="display: inline-block; margin-top: 10px;">
+                                <button onclick="deleteDevice('@device.Id')" style="background-color:#3199ad; padding: 0px; border: none;">
+                                    <img style="width: 25px;" src="~/images/trashBascket.webp" alt="img">
+                                </button>
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div style="width: 48%;">
+                    @foreach (var device in Model.Devices.Where(d => d.GroupDevices.Any(gd => gd.GroupEntityId == group.id) && d.Type == SmartHub.DataContext.DbModels.DeviceType.RemoteController))
+                    {
+                        <div style="margin-bottom: 10px;" class="remote-controller-device">
+                            <button onclick="openRemoteModal('@device.Id', '@device.Name')" class="open-remote-modal-btn" data-id="@device.Id" data-name="@device.Name">
+                                @device.Name
+                                <img style="width: 50px;" src="~/images/remoteController.png" alt="img">
+                            </button>
+
+                            <span style="display: inline-block; margin-top: 10px;">
+                                <button onclick="deleteDevice('@device.Id')" style="background-color:#3199ad; padding: 0px; border: none;">
+                                    <img style="width: 25px;" src="~/images/trashBascket.webp" alt="img">
+                                </button>
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div id="remoteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeRemoteModal()">&times;</span>
+        <div id="remoteModalContent"></div>
+
+         <div class="main">
+    <div style="margin-top:50px;">
+      <!-- Добавлена кнопка Mute -->
+                <a style="border-radius:8px; background-color:#3199ad; margin-top:30px; margin-right:30px;" href="javascript:sendEvent('mute');" class="material-icons more">volume_off</a>
+                <a style="border-radius:8px; background-color:#3199ad; margin-top:30px; margin-left:30px;" href="javascript:sendEvent('power');" class="material-icons power">power_settings_new</a>
+    </div>
+
+	<div class="buttons">
+	  <ul style="padding:0px;" class="vol bg2 shadow">
+        <li><a class="material-icons" href="javascript:sendEvent('channelup');">keyboard_arrow_up</a></li>
+        <li><a class="material-icons" href="javascript:sendEvent('channeldown');">keyboard_arrow_down</a></li>
+      </ul>
+                <ul style="padding:0px;" class="vol bg2 shadow">
+        <li><a class="material-icons" href="javascript:sendEvent('volumeup');">volume_up</a></li>
+        <li><a class="material-icons" href="javascript:sendEvent('volumedown');">volume_down</a></li>
+      </ul>
+	</div>
+
+    <div style="margin-bottom: 30px;" class="remote bg2 shadow">
+      <a class="material-icons up" href="javascript:sendEvent('up');">arrow_drop_up</a>
+      <a class="material-icons left" href="javascript:sendEvent('left');">arrow_left</a>
+      <a class="material-icons right" href="javascript:sendEvent('right');">arrow_right</a>
+      <a class="material-icons down" href="javascript:sendEvent('down');">arrow_drop_down</a>
+      <!-- Добавлены кнопки Menu, Source, Exit и Display -->
+      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;top: -5%;left: -5%;" href="javascript:sendEvent('menu');">menu</a>
+      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;top: -5%;right: -5%;" href="javascript:sendEvent('source');">video_label</a>
+      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;bottom: -5%;left: -5%;" href="javascript:sendEvent('exit');">exit_to_app</a>
+      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;bottom: -5%;right: -5%;" href="javascript:sendEvent('display');">tv</a>
+      <a class="enter" href="javascript:sendEvent('enter');"></a>
+    </div>
+
+
+    
+  </div>
+
+    </div>
+</div>
+
+
+<div class="button-container">
+    <button id="modal-button" class="button">+</button>
+</div>
+<script>
+    document.getElementById("modal-button").addEventListener("click", function () {
+        document.getElementById("myModal").style.display = "block";
+    });
+
+    document.getElementById("close-btn").addEventListener("click", function () {
+        document.getElementById("myModal").style.display = "none";
+    });
+
+    document.getElementById("deviceForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = {
+            name: document.getElementById("name").value.trim(),
+            externalId: document.getElementById("externalId").value.trim(),
+            type: parseInt(document.getElementById("type").value),
+            interfaces: [],
+            groups: []
+        };
+
+        const interfaceItems = document.querySelectorAll("#interfaceList li");
+        interfaceItems.forEach(function (item) {
+            const interfaceData = item.textContent.split("(");
+            const interfaceName = interfaceData[0].trim();
+            const interfaceType = interfaceData[1].replace(")", "").trim();
+            formData.interfaces.push({ name: interfaceName, type: interfaceType });
+        });
+
+        const groupCheckboxes = document.querySelectorAll("input[name='groups']:checked");
+        groupCheckboxes.forEach(function (checkbox) {
+            formData.groups.push(checkbox.value);
+        });
+
+        // Отправка данных на сервер в формате JSON
+        console.log(JSON.stringify(formData));
+
+         fetch('/api/Device/CreateNewDevice', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("OK")
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+
+        document.getElementById("myModal").style.display = "none";
+    });
+
+    document.getElementById("addInterface").addEventListener("click", function () {
+        const interfaceNameInput = document.getElementById("interfaces");
+        const interfaceName = interfaceNameInput.value.trim();
+        const interfaceTypeSelect = document.getElementById("interfaceType");
+        const interfaceType = interfaceTypeSelect.value;
+
+        if (interfaceName !== "") {
+            const interfaceList = document.getElementById("interfaceList");
+            const listItem = document.createElement("li");
+            listItem.textContent = interfaceName + " (" + interfaceType + ")";
+            interfaceList.appendChild(listItem);
+
+            interfaceNameInput.value = "";
+            interfaceTypeSelect.selectedIndex = 0;
+        }
+    });
+
+
+    function openRemoteModal(id, name) {
+        var modalContent = document.getElementById("remoteModalContent");
+       
+        var remoteModal = document.getElementById("remoteModal");
+        remoteModal.style.display = "block";
+    }
+
+    function closeRemoteModal() {
+        var remoteModal = document.getElementById("remoteModal");
+        remoteModal.style.display = "none";
+    }
+
+    function sendEvent(event) {
+      console.log(event);
+    }
+
+function deleteDevice(deviceId) {
+    const requestData = { id: deviceId }; // Создаем объект с id устройства
+
+    fetch('/api/Device/DeleteDevice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData) // Преобразуем объект в строку JSON и отправляем на сервер
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Произошла ошибка при удалении устройства');
+        }
+        console.log('Устройство успешно удалено');
+    })
+    .catch(error => {
+        console.error(error.message);
+    });
+}
+
+</script>

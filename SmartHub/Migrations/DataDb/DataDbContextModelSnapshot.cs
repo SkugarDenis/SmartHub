@@ -70,6 +70,27 @@ namespace SmartHub.Migrations.DataDb
                     b.ToTable("DeviceInterfaceItem");
                 });
 
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GroupEntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("GroupEntityId");
+
+                    b.ToTable("GroupDevices");
+                });
+
             modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -147,6 +168,25 @@ namespace SmartHub.Migrations.DataDb
                         .HasForeignKey("DeviceId");
                 });
 
+            modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupDevice", b =>
+                {
+                    b.HasOne("SmartHub.DataContext.DbModels.Device", "Device")
+                        .WithMany("GroupDevices")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartHub.DataContext.DbModels.GroupEntity", "GroupEntity")
+                        .WithMany()
+                        .HasForeignKey("GroupEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("GroupEntity");
+                });
+
             modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
                 {
                     b.HasOne("SmartHub.DataContext.DbModels.Device", null)
@@ -163,6 +203,8 @@ namespace SmartHub.Migrations.DataDb
 
             modelBuilder.Entity("SmartHub.DataContext.DbModels.Device", b =>
                 {
+                    b.Navigation("GroupDevices");
+
                     b.Navigation("Groups");
 
                     b.Navigation("Interfaces");
