@@ -187,7 +187,7 @@ public class DeviceMiddleware
 
         string dataSign = ExtensionDeviceId + requestId;
 
-        var sign = secretKey.GenerateSHA256Signature(dataSign);
+        var sign = secretKey.GenerateMD5Signature(dataSign);
 
         if (AuthWebSocketMessage.requestObject.Signature.Equals(sign))
             return true;
