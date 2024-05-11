@@ -13,8 +13,6 @@ namespace SmartHub.DeviceHubMiddleware.Requests
         
         public WeboskcetTypeRequest typeRequest { get; set; }
 
-        public long timeStamp { get; set; }
-
         public T requestObject { get; set; }
     }
 

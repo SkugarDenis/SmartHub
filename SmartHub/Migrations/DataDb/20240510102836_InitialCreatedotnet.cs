@@ -40,27 +40,6 @@ namespace SmartHub.Migrations.DataDb
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeviceInterfaceItem",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    DataType = table.Column<int>(type: "INTEGER", nullable: false),
-                    Control = table.Column<string>(type: "TEXT", nullable: false),
-                    DeviceId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeviceInterfaceItem", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DeviceInterfaceItem_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GroupEntities",
                 columns: table => new
                 {
@@ -74,6 +53,27 @@ namespace SmartHub.Migrations.DataDb
                     table.PrimaryKey("PK_GroupEntities", x => x.Id);
                     table.ForeignKey(
                         name: "FK_GroupEntities_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Interfaces",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    DataType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Control = table.Column<string>(type: "TEXT", nullable: false),
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Interfaces", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Interfaces_Devices_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "Devices",
                         principalColumn: "Id");
@@ -127,11 +127,6 @@ namespace SmartHub.Migrations.DataDb
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceInterfaceItem_DeviceId",
-                table: "DeviceInterfaceItem",
-                column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GroupDevices_DeviceId",
                 table: "GroupDevices",
                 column: "DeviceId");
@@ -147,6 +142,11 @@ namespace SmartHub.Migrations.DataDb
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Interfaces_DeviceId",
+                table: "Interfaces",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RelationshipGroupsAndroles_GroupEntityId",
                 table: "RelationshipGroupsAndroles",
                 column: "GroupEntityId");
@@ -155,10 +155,10 @@ namespace SmartHub.Migrations.DataDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DeviceInterfaceItem");
+                name: "GroupDevices");
 
             migrationBuilder.DropTable(
-                name: "GroupDevices");
+                name: "Interfaces");
 
             migrationBuilder.DropTable(
                 name: "RelationshipGroupsAndroles");

@@ -67,7 +67,7 @@ namespace SmartHub.Migrations.DataDb
 
                     b.HasIndex("DeviceId");
 
-                    b.ToTable("DeviceInterfaceItem");
+                    b.ToTable("Interfaces");
                 });
 
             modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupDevice", b =>
@@ -177,7 +177,7 @@ namespace SmartHub.Migrations.DataDb
                         .IsRequired();
 
                     b.HasOne("SmartHub.DataContext.DbModels.GroupEntity", "GroupEntity")
-                        .WithMany()
+                        .WithMany("GroupDevices")
                         .HasForeignKey("GroupEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -212,6 +212,8 @@ namespace SmartHub.Migrations.DataDb
 
             modelBuilder.Entity("SmartHub.DataContext.DbModels.GroupEntity", b =>
                 {
+                    b.Navigation("GroupDevices");
+
                     b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618

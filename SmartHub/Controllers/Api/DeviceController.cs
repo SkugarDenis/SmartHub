@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SmartHub.Controllers.Api.Request;
 using SmartHub.DataContext;
 using SmartHub.DataContext.DbModels;
 using SmartHub.Extensions;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace SmartHub.Controllers.Api
 {
@@ -14,16 +13,18 @@ namespace SmartHub.Controllers.Api
     public class DeviceController : ControllerBase
     {
         private readonly DataDbContext _dataDbContext;
-        public DeviceController(DataDbContext dataDbContext)
+        private readonly IHubContext<NotificationHub> _hubContext;
+        public DeviceController(DataDbContext dataDbContext, IHubContext<NotificationHub> hubContext)
         {
             _dataDbContext = dataDbContext;
+            _hubContext = hubContext;
         }
 
         [HttpPost("CreateNewDevice")]
         public async Task<IActionResult> CreateNewDevice(CreateNewDeviceRequest request)
         {
             var isDeviceExist = await _dataDbContext.Devices
-                .AnyAsync(device => device.Name.Equals(request.name.Trim()) || device.ExternalId.Equals(request.externalId));
+                .AnyAsync(device => device.ExternalId.Equals(request.externalId)); //device.Name.Equals(request.name.Trim()) || 
 
             if (isDeviceExist)
             {
@@ -86,6 +87,46 @@ namespace SmartHub.Controllers.Api
             _dataDbContext.SaveChanges();
 
             return Ok($"Device with ID {request.id} and all related data has been deleted successfully.");
+        }
+
+        [HttpPost("ChangeInterfaceDevice")]
+        public async Task<IActionResult> ChangeInterfaceDevice(ChangeInterfaceDeviceRequest request)
+        {
+            bool IsExistDevice = await _dataDbContext.Devices.AnyAsync(x => x.Id == request.DeviceId);
+
+            if (!IsExistDevice)
+            {
+                return BadRequest();
+            }
+
+
+            if (request.DeviceType == DeviceType.Switch)
+            {
+                bool IsExistInterface = await _dataDbContext.Interfaces
+                    .AnyAsync(x => x.Id == request.InterfaceId);
+
+                if (!IsExistInterface)
+                {
+                    return BadRequest();
+                }
+
+                var interfaceItem = _dataDbContext.Interfaces.FirstOrDefault(x => x.Id == request.InterfaceId);
+
+                interfaceItem.Control = request.data;
+
+                await _dataDbContext.SaveChangesAsync();
+
+                // отправить сигнал о перемене Interface
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", "hello");
+            }
+            else if (request.DeviceType == DeviceType.RemoteController)
+            {
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", "hello");
+                // отправить сигнал о перемене Interface
+            }
+
+
+            return Ok();
         }
     }
 }

@@ -24,6 +24,8 @@ namespace SmartHub
 
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddSingleton<WebSocketManager>();
 
             builder.Services.AddControllersWithViews();
@@ -101,6 +103,12 @@ namespace SmartHub
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/notificationHub");
+            });
 
             app.MapControllerRoute(
                 name: "default",

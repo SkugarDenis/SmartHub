@@ -9,7 +9,7 @@ namespace SmartHub.DataContext
     public class DataDbContext : DbContext
     {
         public DbSet<Device> Devices { get; set; }
-
+        public DbSet<DeviceInterfaceItem> Interfaces { get; set; }
         public DbSet<GroupDevice> GroupDevices { get; set; }
         public DbSet<GroupEntity> GroupEntities { get; set; }
         public DbSet<RelationshipGroupAndRole> RelationshipGroupsAndroles { get; set; }

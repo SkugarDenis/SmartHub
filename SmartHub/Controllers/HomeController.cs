@@ -57,8 +57,5 @@ namespace SmartHub.Controllers
 
             return View(model);
         }
-
-
-
     }
 }

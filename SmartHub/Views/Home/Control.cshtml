@@ -88,7 +88,6 @@
     }
 
 
-    /* The switch - the box around the slider */
 .switch {
  font-size: 17px;
  position: relative;
@@ -97,7 +96,6 @@
  height: 35px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
  opacity: 1;
  width: 0;
@@ -237,6 +235,7 @@ input:checked + .slider:before {
 
     ul#interfaceList li {
         font-size: 14px;
+        font-weight: 700;
     }
 </style>
 
@@ -260,7 +259,7 @@ input:checked + .slider:before {
                     <option value="2">Remote Controller</option>
                 </select>
             </div>
-            <div>
+            <div class="form-group">
                 <label for="interfaces">Interfaces:</label>
                 <input type="text" id="interfaces" name="interfaces" placeholder="Enter interface name">
                 <select id="interfaceType">
@@ -268,7 +267,7 @@ input:checked + .slider:before {
                     <option value="String">String</option>
                     <option value="Int">Int</option>
                 </select>
-                <button type="button" id="addInterface">Add Interface</button>
+                <button style="margin-top:10px;" type="button" id="addInterface">Add Interface</button>
                 <ul id="interfaceList"></ul>
             </div>
             <div>
@@ -302,87 +301,112 @@ input:checked + .slider:before {
                             @foreach (var inter in device.Interfaces)
                             {
                                 <label style="margin:1px;" class="switch">
-                                    <input type="checkbox">
+                                    @if (inter.Control.Equals("true"))
+                                    {
+                                        <input type="checkbox" data-device-id="@device.Id" data-interface-id="@inter.Id" checked>
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" data-device-id="@device.Id" data-interface-id="@inter.Id">
+                                    }
                                     <span class="slider"></span>
                                 </label>
                             }
-                            <span style="display: inline-block; margin-top: 10px;">
-                                <button onclick="deleteDevice('@device.Id')" style="background-color:#3199ad; padding: 0px; border: none;">
-                                    <img style="width: 25px;" src="~/images/trashBascket.webp" alt="img">
-                                </button>
-                            </span>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <div style="background-color:#3199ad; margin-top: 10px;">
+                                    <button onclick="deleteDevice('@device.Id')" style="background-color:#3199ad; padding: 0px; border: none;">
+                                        <img style="width: 25px;" src="~/images/trashBascket.webp" alt="img">
+                                    </button>
+                                </div>
+                            }
+                            
                         </div>
                     }
                 </div>
                 <div style="width: 48%;">
                     @foreach (var device in Model.Devices.Where(d => d.GroupDevices.Any(gd => gd.GroupEntityId == group.id) && d.Type == SmartHub.DataContext.DbModels.DeviceType.RemoteController))
                     {
-                        <div style="margin-bottom: 10px;" class="remote-controller-device">
-                            <button onclick="openRemoteModal('@device.Id', '@device.Name')" class="open-remote-modal-btn" data-id="@device.Id" data-name="@device.Name">
+                        <div style="margin-bottom: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); padding:5px;">
+                            <div style="margin-bottom: 10px;" class="remote-controller-device">
+                                <button onclick="openRemoteModal('@device.Id', '@device.Name')" class="open-remote-modal-btn" data-id="@device.Id" data-name="@device.Name">
                                 @device.Name
                                 <img style="width: 50px;" src="~/images/remoteController.png" alt="img">
                             </button>
-
-                            <span style="display: inline-block; margin-top: 10px;">
-                                <button onclick="deleteDevice('@device.Id')" style="background-color:#3199ad; padding: 0px; border: none;">
-                                    <img style="width: 25px;" src="~/images/trashBascket.webp" alt="img">
-                                </button>
-                            </span>
+                                @if (User.IsInRole("admin"))
+                                {
+                                    <div style="background-color:#3199ad; margin-top: 10px;">
+                                        <button onclick="deleteDevice('@device.Id')" style="background-color:#3199ad; padding: 0px; border: none;">
+                                            <img style="width: 25px;" src="~/images/trashBascket.webp" alt="img">
+                                        </button>
+                                    </div>
+                                }
+                                
                         </div>
+                        </div>
+                        
                     }
                 </div>
             </div>
         </div>
     }
 </div>
+ @foreach (var group in Model.GroupItems)
+{
+    @foreach (var device in Model.Devices.Where(d => d.GroupDevices.Any(gd => gd.GroupEntityId == group.id) && d.Type == SmartHub.DataContext.DbModels.DeviceType.RemoteController))
+    {
+        <div id="remoteModal_@device.Id" class="modal">
+            <div style="background-color:black;" class="modal-content">
+                <span class="close-btn" onclick="closeRemoteModal(@device.Id)">&times;</span>
+                <div id="remoteModalContent_@device.Id"></div>
 
-<div id="remoteModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeRemoteModal()">&times;</span>
-        <div id="remoteModalContent"></div>
+                <div class="main">
+                    <div style="margin-top:50px;">
+                        <!-- Добавлена кнопка Mute -->
+                        <a style="border:1px solid black; border-radius:8px; background-color:#3199ad; margin-top:30px; margin-right:30px;" href="javascript:sendEvent('mute', @device.Id);" class="material-icons more">volume_off</a>
+                        <a style="border:1px solid black; border-radius:8px; background-color:#3199ad; margin-top:30px; margin-left:30px;" href="javascript:sendEvent('power', @device.Id);" class="material-icons power">power_settings_new</a>
+                    </div>
 
-         <div class="main">
-    <div style="margin-top:50px;">
-      <!-- Добавлена кнопка Mute -->
-                <a style="border-radius:8px; background-color:#3199ad; margin-top:30px; margin-right:30px;" href="javascript:sendEvent('mute');" class="material-icons more">volume_off</a>
-                <a style="border-radius:8px; background-color:#3199ad; margin-top:30px; margin-left:30px;" href="javascript:sendEvent('power');" class="material-icons power">power_settings_new</a>
+                    <div style="margin:50px;" class="buttons">
+                        <ul style="border:1px solid black; padding:0px;" class="vol bg2 shadow">
+                            <li><a class="material-icons" href="javascript:sendEvent('channelup', @device.Id);">keyboard_arrow_up</a></li>
+                            <li><a class="material-icons" href="javascript:sendEvent('channeldown', @device.Id);">keyboard_arrow_down</a></li>
+                        </ul>
+                        <ul style="border:1px solid black; padding:0px;" class="vol bg2 shadow">
+                            <li><a class="material-icons" href="javascript:sendEvent('volumeup', @device.Id);">volume_up</a></li>
+                            <li><a class="material-icons" href="javascript:sendEvent('volumedown', @device.Id);">volume_down</a></li>
+                        </ul>
+                    </div>
+
+                    <div style="border:1px solid black; margin-bottom: 30px;" class="remote bg2 shadow">
+                        <a class="material-icons up" href="javascript:sendEvent('up', @device.Id);">arrow_drop_up</a>
+                        <a class="material-icons left" href="javascript:sendEvent('left', @device.Id);">arrow_left</a>
+                        <a class="material-icons right" href="javascript:sendEvent('right', @device.Id);">arrow_right</a>
+                        <a class="material-icons down" href="javascript:sendEvent('down', @device.Id);">arrow_drop_down</a>
+                        <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;top: -5%;left: -5%;" href="javascript:sendEvent('menu', @device.Id);">menu</a>
+                        <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;top: -5%;right: -5%;" href="javascript:sendEvent('source', @device.Id);">video_label</a>
+                        <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;bottom: -5%;left: -5%;" href="javascript:sendEvent('exit', @device.Id);">exit_to_app</a>
+                        <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;bottom: -5%;right: -5%;" href="javascript:sendEvent('display', @device.Id);">tv</a>
+                        <a class="enter" href="javascript:sendEvent('enter', @device.Id);"></a>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+    }
+}
+
+
+@if (User.IsInRole("admin"))
+{
+    <div class="button-container">
+        <img id="modal-button" class="button" style="width: 35px;" src="~/images/plus.png" alt="img">
     </div>
-
-	<div class="buttons">
-	  <ul style="padding:0px;" class="vol bg2 shadow">
-        <li><a class="material-icons" href="javascript:sendEvent('channelup');">keyboard_arrow_up</a></li>
-        <li><a class="material-icons" href="javascript:sendEvent('channeldown');">keyboard_arrow_down</a></li>
-      </ul>
-                <ul style="padding:0px;" class="vol bg2 shadow">
-        <li><a class="material-icons" href="javascript:sendEvent('volumeup');">volume_up</a></li>
-        <li><a class="material-icons" href="javascript:sendEvent('volumedown');">volume_down</a></li>
-      </ul>
-	</div>
-
-    <div style="margin-bottom: 30px;" class="remote bg2 shadow">
-      <a class="material-icons up" href="javascript:sendEvent('up');">arrow_drop_up</a>
-      <a class="material-icons left" href="javascript:sendEvent('left');">arrow_left</a>
-      <a class="material-icons right" href="javascript:sendEvent('right');">arrow_right</a>
-      <a class="material-icons down" href="javascript:sendEvent('down');">arrow_drop_down</a>
-      <!-- Добавлены кнопки Menu, Source, Exit и Display -->
-      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;top: -5%;left: -5%;" href="javascript:sendEvent('menu');">menu</a>
-      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;top: -5%;right: -5%;" href="javascript:sendEvent('source');">video_label</a>
-      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;bottom: -5%;left: -5%;" href="javascript:sendEvent('exit');">exit_to_app</a>
-      <a class="material-icons" style="padding:5px; border-radius:8px; background-color:#3199ad; font-size: 4vw;bottom: -5%;right: -5%;" href="javascript:sendEvent('display');">tv</a>
-      <a class="enter" href="javascript:sendEvent('enter');"></a>
-    </div>
-
-
-    
-  </div>
-
-    </div>
-</div>
-
-
-<div class="button-container">
-    <button id="modal-button" class="button">+</button>
-</div>
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.js"></script>
 <script>
     document.getElementById("modal-button").addEventListener("click", function () {
         document.getElementById("myModal").style.display = "block";
@@ -416,7 +440,6 @@ input:checked + .slider:before {
             formData.groups.push(checkbox.value);
         });
 
-        // Отправка данных на сервер в формате JSON
         console.log(JSON.stringify(formData));
 
          fetch('/api/Device/CreateNewDevice', {
@@ -456,30 +479,57 @@ input:checked + .slider:before {
 
 
     function openRemoteModal(id, name) {
-        var modalContent = document.getElementById("remoteModalContent");
+        var modalContent = document.getElementById("remoteModalContent_" + id);
        
-        var remoteModal = document.getElementById("remoteModal");
+        var remoteModal = document.getElementById("remoteModal_" + id);
         remoteModal.style.display = "block";
     }
 
-    function closeRemoteModal() {
-        var remoteModal = document.getElementById("remoteModal");
+    function closeRemoteModal(id) {
+        var remoteModal = document.getElementById("remoteModal_" + id);
         remoteModal.style.display = "none";
     }
 
-    function sendEvent(event) {
+    function sendEvent(event, id) {
       console.log(event);
+        console.log(id);
+
+        var requestData = {
+            deviceId: id,
+            deviceType: 2, // RemoteController
+            data: event
+        };
+
+        console.log(JSON.stringify(requestData));
+
+        fetch('/api/Device/ChangeInterfaceDevice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Можно обработать успешный ответ от сервера здесь, если это необходимо
+                console.log('Данные успешно отправлены на сервер');
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
     }
 
 function deleteDevice(deviceId) {
-    const requestData = { id: deviceId }; // Создаем объект с id устройства
+    const requestData = { id: deviceId };
 
     fetch('/api/Device/DeleteDevice', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestData) // Преобразуем объект в строку JSON и отправляем на сервер
+        body: JSON.stringify(requestData)
     })
     .then(response => {
         if (!response.ok) {
@@ -491,5 +541,74 @@ function deleteDevice(deviceId) {
         console.error(error.message);
     });
 }
+
+
+document.querySelectorAll('.switch input[type="checkbox"]').forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+
+        var isChecked = this.checked;
+
+        var deviceId = this.getAttribute('data-device-id');
+
+        var interfaceId = this.getAttribute('data-interface-id');
+
+
+
+        console.log('Состояние переключателя:', isChecked);
+        console.log('ID устройства:', deviceId);
+        console.log('ID интерфейса:', interfaceId);
+        var requestData = {
+                deviceId: deviceId,
+                interfaceId: interfaceId,
+                deviceType: 1, // Switch
+                data: isChecked.toString() // Здесь вы можете изменить, какие данные отправлять на сервер, если это необходимо
+            };
+
+            let s = JSON.stringify(requestData)
+            console.log(s);
+
+            // Отправляем данные на сервер
+            fetch('/api/Device/ChangeInterfaceDevice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // Можно обработать успешный ответ от сервера здесь, если это необходимо
+                    console.log('Данные успешно отправлены на сервер');
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
+    });
+});
+
+const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/notificationHub")
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+
+async function start() {
+    try {
+        await connection.start();
+        console.log("SignalR Connected.");
+    } catch (err) {
+        console.log(err);
+        setTimeout(start, 5000);
+    }
+};
+
+connection.onclose(async () => {
+    await start();
+});
+
+// Start the connection.
+start();
+
 
 </script>

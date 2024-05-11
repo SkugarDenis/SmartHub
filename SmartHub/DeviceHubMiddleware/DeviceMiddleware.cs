@@ -44,10 +44,10 @@ public class DeviceMiddleware
         _webSocketManager = webSocketManager;
         _configuration = configuration;
     }
-
+    
     public async Task Invoke(HttpContext context)
     {
-        if (context.WebSockets.IsWebSocketRequest)
+        if (context.WebSockets.IsWebSocketRequest && context.Request.Path.Equals("/devices")) 
         {
             WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
             string connectionId = Guid.NewGuid().ToString();
@@ -78,18 +78,29 @@ public class DeviceMiddleware
             {
                 string message = result.Message;
 
-                BaseWebSocketRequest<object>? baseWebSocketRequest = JsonConvert.DeserializeObject<BaseWebSocketRequest<object>>(message);
-                if (baseWebSocketRequest != null)
+                try
                 {
-                    await HandlerRecivedMessage(deviceClient,
-                        baseWebSocketRequest,
-                        message,
-                        connectionId);
+                    BaseWebSocketRequest<object>? baseWebSocketRequest = JsonConvert.DeserializeObject<BaseWebSocketRequest<object>>(message);
+                    if (baseWebSocketRequest != null)
+                    {
+                        await HandlerRecivedMessage(deviceClient,
+                            baseWebSocketRequest,
+                            message,
+                            connectionId);
+                    }
+                    else
+                    {
+                        await CloseConnection(deviceClient.webSocket, connectionId);
+                    }
                 }
-                else
+                catch (Exception)
                 {
+                    byte[] buffer = Encoding.UTF8.GetBytes("Error");
+                    await _webSocketManager.HandleMessageAsync(connectionId, buffer);
                     await CloseConnection(deviceClient.webSocket, connectionId);
                 }
+
+                
             }
             else if (result.webScoketResult.MessageType == WebSocketMessageType.Close)
             {
@@ -171,11 +182,10 @@ public class DeviceMiddleware
     {
         var secretKey = _configuration["WebSocketSettings:AuthKeyExtensionDevice"];
 
-        long timeStamp = AuthWebSocketMessage.timeStamp;
-        string ExtensionDeviceId = AuthWebSocketMessage.requestObject.ExtensionDeviceId;
+        string ExtensionDeviceId = AuthWebSocketMessage.ExtensionDeviceId;
         string requestId = AuthWebSocketMessage.requestId;
 
-        string dataSign = timeStamp.ToString() + ExtensionDeviceId + requestId;
+        string dataSign = ExtensionDeviceId + requestId;
 
         var sign = secretKey.GenerateSHA256Signature(dataSign);
 
