@@ -26,7 +26,7 @@ namespace SmartHub
 
             builder.Services.AddSignalR();
 
-            builder.Services.AddSingleton<WebSocketManager>();
+            builder.Services.AddSingleton<DeviceManager>();
 
             builder.Services.AddControllersWithViews();
 

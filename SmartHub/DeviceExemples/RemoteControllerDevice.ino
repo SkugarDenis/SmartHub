@@ -1,9 +1,6 @@
 ﻿/*
- * WebSocketClientSSL.ino
  *
- *  Created on: 10.12.2015
- *
- *  note SSL is only possible with the ESP8266
+ * ESP8266 only
  *
  */
 

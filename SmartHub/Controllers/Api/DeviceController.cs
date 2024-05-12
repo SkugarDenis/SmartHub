@@ -14,10 +14,12 @@ namespace SmartHub.Controllers.Api
     {
         private readonly DataDbContext _dataDbContext;
         private readonly IHubContext<NotificationHub> _hubContext;
-        public DeviceController(DataDbContext dataDbContext, IHubContext<NotificationHub> hubContext)
+        private readonly DeviceManager _deviceManager;
+        public DeviceController(DataDbContext dataDbContext, IHubContext<NotificationHub> hubContext, DeviceManager deviceManager)
         {
             _dataDbContext = dataDbContext;
             _hubContext = hubContext;
+            _deviceManager = deviceManager;
         }
 
         [HttpPost("CreateNewDevice")]
@@ -92,9 +94,9 @@ namespace SmartHub.Controllers.Api
         [HttpPost("ChangeInterfaceDevice")]
         public async Task<IActionResult> ChangeInterfaceDevice(ChangeInterfaceDeviceRequest request)
         {
-            bool IsExistDevice = await _dataDbContext.Devices.AnyAsync(x => x.Id == request.DeviceId);
+            var Device = await _dataDbContext.Devices.FirstOrDefaultAsync(x => x.Id == request.DeviceId);
 
-            if (!IsExistDevice)
+            if (Device == null)
             {
                 return BadRequest();
             }
@@ -118,13 +120,19 @@ namespace SmartHub.Controllers.Api
 
                 // отправить сигнал о перемене Interface
                 await _hubContext.Clients.All.SendAsync("ReceiveNotification", "hello");
+
+                await _deviceManager.NotificationDevice(Device.ExternalId, interfaceItem);
             }
             else if (request.DeviceType == DeviceType.RemoteController)
             {
                 await _hubContext.Clients.All.SendAsync("ReceiveNotification", "hello");
                 // отправить сигнал о перемене Interface
+                await _deviceManager.NotificationDevice(Device.ExternalId, new DeviceInterfaceItem()
+                {
+                     Control= request.data,
+                     DataType = DataType.String,
+                });
             }
-
 
             return Ok();
         }

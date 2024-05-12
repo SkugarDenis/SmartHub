@@ -6,14 +6,24 @@ using SmartHub.Extensions;
 using SmartHub.DeviceHubMiddleware.Requests;
 using Newtonsoft.Json;
 using SmartHub.DeviceHubMiddleware.Response;
+using SmartHub.DataContext.DbModels;
+using Microsoft.AspNetCore.Http;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-public class WebSocketManager
+public class DeviceManager
 {
-    private readonly ConcurrentDictionary<string, WebSocket> _connections = new ConcurrentDictionary<string, WebSocket>();
+    private readonly ConcurrentDictionary<string, DeviceClient> _connections = new ConcurrentDictionary<string, DeviceClient>();
 
-    public async Task AddConnectionAsync(string connectionId, WebSocket webSocket)
+    public async Task AddConnectionAsync(string connectionId, DeviceClient client)
     {
-        _connections.TryAdd(connectionId, webSocket);
+        // если такой Extension есть удаляем предыдущий
+        var connection = _connections.FirstOrDefault(x => x.Value.ExtensionId.Equals(client.ExtensionId));
+        if (!connection.Equals(default(KeyValuePair<string, DeviceClient>)))
+        {
+            _connections.TryRemove(connection.Key, out _);
+        }
+
+        _connections.TryAdd(connectionId, client);
         await Task.CompletedTask;
     }
 
@@ -25,9 +35,32 @@ public class WebSocketManager
 
     public async Task HandleMessageAsync(string connectionId, byte[] buffer)
     {
-        if (_connections.TryGetValue(connectionId, out WebSocket? webSocket))
+        if (_connections.TryGetValue(connectionId, out DeviceClient? client))
         {
-            await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+            await client.webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+    }
+
+    public async Task NotificationDevice(string extentsionIdDevice, DeviceInterfaceItem interfaceItem)
+    {
+        var client = _connections.Values.FirstOrDefault(x => x.ExtensionId.Equals(extentsionIdDevice));
+
+        if (client != null)
+        {
+            NotificationInterfecItemChange notificationInterfecItemChange = new NotificationInterfecItemChange()
+            {
+                dataType = interfaceItem.DataType,
+                ItefaceName = interfaceItem.Name,
+                Value = interfaceItem.Control
+            };
+
+            string json = JsonConvert.SerializeObject(notificationInterfecItemChange);
+            byte[] buffer = Encoding.UTF8.GetBytes(json);
+            await client.webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+        else
+        {
+            Console.WriteLine($"NotificationDevice is not defide connection to device id: {extentsionIdDevice}");
         }
     }
 }
@@ -35,10 +68,10 @@ public class WebSocketManager
 public class DeviceMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly WebSocketManager _webSocketManager;
+    private readonly DeviceManager _webSocketManager;
     private readonly IConfiguration _configuration;
     private readonly int BuffeSize = 2048;
-    public DeviceMiddleware(RequestDelegate next, WebSocketManager webSocketManager, IConfiguration configuration)
+    public DeviceMiddleware(RequestDelegate next, DeviceManager webSocketManager, IConfiguration configuration)
     {
         _next = next;
         _webSocketManager = webSocketManager;
@@ -51,7 +84,6 @@ public class DeviceMiddleware
         {
             WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
             string connectionId = Guid.NewGuid().ToString();
-            await _webSocketManager.AddConnectionAsync(connectionId, webSocket);
 
             DeviceClient deviceClient = new DeviceClient()
             {
@@ -129,6 +161,10 @@ public class DeviceMiddleware
                 var IsSucsess = AunteficateClient(AuthWebSocketMessage);
                 authResponse.ResultAutentificate = IsSucsess;
                 deviceClient.IsAuth = IsSucsess;
+                deviceClient.ExtensionId = AuthWebSocketMessage.ExtensionDeviceId;
+
+
+                await _webSocketManager.AddConnectionAsync(connectionId, deviceClient);
             }
 
             string json = JsonConvert.SerializeObject(authResponse);

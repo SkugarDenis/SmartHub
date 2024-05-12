@@ -10,5 +10,7 @@ namespace SmartHub.DeviceHubMiddleware.Entity
         public bool IsAuth { get; set; } = false;
 
         public DeviceType deviceType { get; set; }
+
+        public string ExtensionId { get; set; }
     }
 }
