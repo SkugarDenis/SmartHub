@@ -259,6 +259,20 @@ input:checked + .slider:before {
                     <option value="2">Remote Controller</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="UserInterfaceType">Type:</label>
+                <select id="UserInterfaceType" name="type">
+                    <option value="1">SwitchBulbOneTab</option>
+                    <option value="2">SwitchBulbTwoTab</option>
+                    <option value="3">SwitchBulbThreeTab</option>
+                    <option value="4">SwitchBulbFourTab</option>
+                    <option value="5">SwitchSockcet</option>
+                    <option value="6">RemoteTV</option>
+                    <option value="7">RemoteAirConditioner</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="interfaces">Interfaces:</label>
                 <input type="text" id="interfaces" name="interfaces" placeholder="Enter interface name">
@@ -353,7 +367,7 @@ input:checked + .slider:before {
 </div>
  @foreach (var group in Model.GroupItems)
 {
-    @foreach (var device in Model.Devices.Where(d => d.GroupDevices.Any(gd => gd.GroupEntityId == group.id) && d.Type == SmartHub.DataContext.DbModels.DeviceType.RemoteController))
+    @foreach (var device in Model.Devices.Where(d => d.GroupDevices.Any(gd => gd.GroupEntityId == group.id) && d.UserInterfaceType == SmartHub.DataContext.DbModels.UserInterfaceType.RemoteTV))
     {
         <div id="remoteModal_@device.Id" class="modal">
             <div style="background-color:black;" class="modal-content">
@@ -379,10 +393,10 @@ input:checked + .slider:before {
                     </div>
 
                     <div style="border:1px solid black; margin-bottom: 30px;" class="remote bg2 shadow">
-                        <a class="material-icons up" href="javascript:sendEvent('up', @device.Id);">arrow_drop_up</a>
-                        <a class="material-icons left" href="javascript:sendEvent('left', @device.Id);">arrow_left</a>
-                        <a class="material-icons right" href="javascript:sendEvent('right', @device.Id);">arrow_right</a>
-                        <a class="material-icons down" href="javascript:sendEvent('down', @device.Id);">arrow_drop_down</a>
+                        <a class="material-icons up" href="javascript:sendEvent('arrow_drop_up', @device.Id);">arrow_drop_up</a>
+                        <a class="material-icons left" href="javascript:sendEvent('arrow_left', @device.Id);">arrow_left</a>
+                        <a class="material-icons right" href="javascript:sendEvent('arrow_right', @device.Id);">arrow_right</a>
+                        <a class="material-icons down" href="javascript:sendEvent('arrow_drop_down', @device.Id);">arrow_drop_down</a>
                         <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 7vw;top: -5%;left: -5%;" href="javascript:sendEvent('menu', @device.Id);">menu</a>
                         <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 7vw;top: -5%;right: -5%;" href="javascript:sendEvent('source', @device.Id);">video_label</a>
                         <a class="material-icons" style="border:1px solid black; padding:5px; border-radius:8px; background-color:#3199ad; font-size: 7vw;bottom: -5%;left: -5%;" href="javascript:sendEvent('exit', @device.Id);">exit_to_app</a>
@@ -423,6 +437,7 @@ input:checked + .slider:before {
             name: document.getElementById("name").value.trim(),
             externalId: document.getElementById("externalId").value.trim(),
             type: parseInt(document.getElementById("type").value),
+            UserInterfaceType: parseInt(document.getElementById("UserInterfaceType").value),
             interfaces: [],
             groups: []
         };

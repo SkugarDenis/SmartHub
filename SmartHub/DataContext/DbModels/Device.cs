@@ -18,6 +18,8 @@ namespace SmartHub.DataContext.DbModels
 
         public List<GroupEntity> Groups { get; set; }
 
+        public UserInterfaceType UserInterfaceType { get; set; }
+
         public DeviceType Type { get; set; }
 
         public List<DeviceInterfaceItem> Interfaces { get; set; }
@@ -38,6 +40,17 @@ namespace SmartHub.DataContext.DbModels
 
 
         public string Control { get; set; }
+    }
+
+    public enum UserInterfaceType
+    {
+        SwitchBulbOneTab = 1,
+        SwitchBulbTwoTab = 2,
+        SwitchBulbThreeTab = 3,
+        SwitchBulbFourTab = 4,
+        SwitchSockcet = 5,
+        RemoteTV = 6,
+        RemoteAirConditioner = 7
     }
 
     public enum DeviceType

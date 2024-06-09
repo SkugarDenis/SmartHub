@@ -11,7 +11,7 @@ using SmartHub.DataContext;
 namespace SmartHub.Migrations.DataDb
 {
     [DbContext(typeof(DataDbContext))]
-    [Migration("20240510102836_InitialCreatedotnet")]
+    [Migration("20240609081749_InitialCreatedotnet")]
     partial class InitialCreatedotnet
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace SmartHub.Migrations.DataDb
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserInterfaceType")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

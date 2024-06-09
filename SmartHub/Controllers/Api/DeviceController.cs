@@ -33,10 +33,10 @@ namespace SmartHub.Controllers.Api
                 return BadRequest("Device with the same name or external ID already exists.");
             }
 
-            if (!request.interfaces.Any() || !request.groups.Any())
-            {
-                return BadRequest("Interfaces or groups are missing.");
-            }
+            //if (!request.interfaces.Any() || !request.groups.Any())
+            //{
+            //    return BadRequest("Interfaces or groups are missing.");
+            //}
 
             var groups = await _dataDbContext.GroupEntities
                 .Where(x => request.groups.Any(g => g.Equals(x.Name)))
@@ -50,7 +50,7 @@ namespace SmartHub.Controllers.Api
             var interfaces = request.interfaces.Select(x => new DeviceInterfaceItem()
             {
                 Name = x.name,
-                DataType = x.type.GetDataTypeForString(),
+                DataType = x.data.GetDataTypeForString(),
                 Control = "default"
             }).ToList();
 
@@ -61,6 +61,7 @@ namespace SmartHub.Controllers.Api
                 Name = request.name,
                 Interfaces = interfaces,
                 Type = request.type,
+                UserInterfaceType = request.userInterfaceType,
                 GroupDevices = groups.Select(group => new GroupDevice { GroupEntityId = group.Id }).ToList()
             };
 
@@ -94,7 +95,7 @@ namespace SmartHub.Controllers.Api
         [HttpPost("ChangeInterfaceDevice")]
         public async Task<IActionResult> ChangeInterfaceDevice(ChangeInterfaceDeviceRequest request)
         {
-            var Device = await _dataDbContext.Devices.FirstOrDefaultAsync(x => x.Id == request.DeviceId);
+            var Device = await _dataDbContext.Devices.Include(x=>x.Interfaces).FirstOrDefaultAsync(x => x.Id == request.DeviceId);
 
             if (Device == null)
             {
@@ -118,7 +119,6 @@ namespace SmartHub.Controllers.Api
 
                 await _dataDbContext.SaveChangesAsync();
 
-                // отправить сигнал о перемене Interface
                 await _hubContext.Clients.All.SendAsync("ReceiveNotification", "hello");
 
                 await _deviceManager.NotificationDevice(Device.ExternalId, interfaceItem);
@@ -126,15 +126,42 @@ namespace SmartHub.Controllers.Api
             else if (request.DeviceType == DeviceType.RemoteController)
             {
                 await _hubContext.Clients.All.SendAsync("ReceiveNotification", "hello");
-                // отправить сигнал о перемене Interface
+
+                var data = Device.Interfaces.FirstOrDefault(x => x.Name.Equals(request.data));
+
                 await _deviceManager.NotificationDevice(Device.ExternalId, new DeviceInterfaceItem()
                 {
-                     Control= request.data,
+                     Control= data.Control,
                      DataType = DataType.String,
+                     Name = data.Name
                 });
             }
 
             return Ok();
         }
+
+        [HttpPost("UpdateInterfaceToDevice")]
+        public async Task<IActionResult> UpdateInterfaceToDevice(UpdateInterfaceToDeviceRequest request)
+        {
+            var device = await _dataDbContext.Devices.Include(x=>x.Interfaces).FirstOrDefaultAsync(x => x.ExternalId.Equals(request.externalDeviceId));
+
+            if (device != null && device.Type == DeviceType.RemoteController)
+            {
+                _dataDbContext.RemoveRange(device.Interfaces);
+
+                device.Interfaces = request.interfaces.Select(x => new DeviceInterfaceItem()
+                {
+                    DataType = DataType.String,
+                    Control = x.data,
+                    Name = x.name
+                }).ToList();
+
+                await _dataDbContext.SaveChangesAsync();
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
     }
 }

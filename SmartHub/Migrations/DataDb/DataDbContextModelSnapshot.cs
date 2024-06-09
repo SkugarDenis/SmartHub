@@ -38,6 +38,9 @@ namespace SmartHub.Migrations.DataDb
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("UserInterfaceType")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Devices");

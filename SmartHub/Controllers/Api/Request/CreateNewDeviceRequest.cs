@@ -7,7 +7,8 @@ namespace SmartHub.Controllers.Api.Request
         public string name { get; set; }
         public string externalId { get; set; }
         public DeviceType type { get; set; }
-        public List<DeviceIterfaceRequest> interfaces { get; set; }
+        public UserInterfaceType userInterfaceType { get; set; }
+        public List<DeviceIterfaceRequest>? interfaces { get; set; }
         public List<string> groups { get; set; }
     }
 }

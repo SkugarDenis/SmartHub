@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmartHub.Controllers.Api.Request;
 using SmartHub.DataContext;
+using SmartHub.DataContext.DbModels;
 using SmartHub.Models;
 using System.Diagnostics;
 
@@ -40,6 +41,10 @@ namespace SmartHub.Controllers
         {
             var model = new ControlViewModel();
 
+            var deviceTypes = Enum.GetValues(typeof(DeviceType));
+            var UserInterfaceDeviceTypes = Enum.GetValues(typeof(UserInterfaceType));
+            var DataTypes = Enum.GetValues(typeof(DataType));
+
             var devices = await _dataDbContext.Devices
                 .Include(d => d.GroupDevices)
                     .ThenInclude(gd => gd.GroupEntity)
@@ -54,6 +59,9 @@ namespace SmartHub.Controllers
                 .ToListAsync();
 
             model.GroupItems = groupItems;
+            model.DeviceTypes = deviceTypes;
+            model.UserInterfaceDeviceTypes = UserInterfaceDeviceTypes;
+            model.DataTypes = DataTypes;
 
             return View(model);
         }
