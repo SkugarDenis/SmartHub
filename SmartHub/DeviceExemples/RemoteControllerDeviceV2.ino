@@ -85,7 +85,7 @@ void ClickButton(char* str)
 
     // Преобразование строки Value в массив uint16_t
     String valueStr = String(value);
-    int values[200];
+    uint16_t values[200];
     int index = 0;
     char* token = strtok((char*)valueStr.c_str(), ",");
     while (token != NULL) {
